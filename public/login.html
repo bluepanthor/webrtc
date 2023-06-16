@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+</head>
+
+<body>
+    <section style="
+    background: #a5caafbf;">
+
+        <div class="box" style="
+        background: #d2d3d6;">
+
+            <form>
+
+                <div class="heading">
+                    <h2>Login Form</h2><br>
+                </div>
+
+                <div class="form-group">
+                    Email <input type="text" id="email" style="margin-left: 27px;">
+                </div><br>
+
+
+                <div class="form-group">
+                    Password <input type="password" id="pwd1" style="margin-left: 4px;">
+                </div><br>
+
+                <button type="button" class="pointer" id="login" onclick="store()" style="margin-top: 12px;">Log
+                    In</button><br><br>
+
+
+                <p style="float: center;">
+                    <b>New User ?
+                        <a href="register.html">Creat an Account</a></b>
+                </p>
+            </form>
+        </div>
+    </section>
+
+
+    <!-- css -->
+
+    <style>
+        .heading {
+            text-align: center;
+        }
+        
+        section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .box {
+            position: relative;
+            padding: 70px;
+            width: 400px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 5px 10px 18px rgb(15, 15, 15);
+        }
+        
+        .pointer {
+            width: 80px;
+            background: #fff;
+            color: #111;
+            max-width: 100px;
+            padding: 12px 13px;
+            border-radius: 5px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        
+        .pointer:hover {
+            background-color: rgb(70, 227, 238);
+        }
+    </style>
+
+
+    <!-- Javascript -->
+
+    <script>
+        function store() {
+
+            var email = document.getElementById('email').value;
+            var pwd1 = document.getElementById('pwd1').value;
+            localStorage.setItem("email", email);
+            localStorage.setItem("pwd1", pwd1);
+            let loggedUser = ''
+
+            var storeuserData = localStorage.getItem('users')
+            if (!storeuserData) {
+                event.preventDefault();
+                return;
+            }
+            var allusersEntri = JSON.parse(storeuserData);
+            var isRegistredUser = false
+
+            for (var i = 0; i < allusersEntri.length; i++) {
+                var usersEntry = allusersEntri[i];
+
+                var storeuseremail = usersEntry.email;
+                var storePassWord = usersEntry.pwd1;
+
+                if (email == storeuseremail && pwd1 == storePassWord) {
+                    loggedUser = usersEntry
+                    isRegistredUser = true
+                }
+
+
+            }
+
+            if (isRegistredUser) {
+                localStorage.setItem("loggeduser", JSON.stringify(loggedUser));
+
+                if (loggedUser.role == "admin") {
+                    location.href = 'admin.html';
+                    console.log(email + " is logged in !!")
+                } else {
+                    location.href = 'user.html'
+                    console.log(email + " is logged in !!")
+                }
+
+            } else {
+                alert('user is not register')   
+            }
+        }
+    </script>
+
+</body>
+
+</html>

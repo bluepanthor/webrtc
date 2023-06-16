@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Pannel</title>
+
+    <!-- css -->
+
+    <style>
+        table,
+        th,
+        td {
+
+            border: 2px solid black;
+            padding: 5px;
+
+        }
+
+        a {
+            word-spacing: normal;
+        }
+    </style>
+
+</head>
+
+<body style="background-color: rgb(191, 191, 204);">
+    <h1 style="background-color: rgb(10, 10, 10);color: #f3eded;text-align: center;padding: 20px;">User Pannel </h1>
+
+    <nav style="font-size: 20px;padding: 10px;word-spacing: 30px;">
+        <a href="user.html">Home</a> |
+        <a href="user.html" onClick="prepareTablecell(); return false;">My Profile</a> |
+        <a href="login.html"  onclick="removeloggeduser();">Logout</a>
+    </nav>
+
+    <form>
+        <fieldset>
+            <table id="regtable">
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Email</th>
+                </tr>
+
+            </table>
+
+        </fieldset>
+
+    </form>
+
+
+    <!-- Javascript -->
+
+    <script type="text/javascript">
+
+
+        let userArray = JSON.parse(localStorage.loggeduser);
+
+        var table = document.getElementById("regtable");
+
+        var row = table.insertRow();
+
+        unameCell = row.insertCell();
+        pwd1NameCell = row.insertCell();
+        emailNameCell = row.insertCell();
+
+        unameCell.innerHTML = userArray.username;
+        pwd1NameCell.innerHTML = userArray.pwd1;
+        emailNameCell.innerHTML = userArray.email;
+
+        function removeloggeduser() {
+            localStorage.removeItem("loggeduser");
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users Profile</title>
+
+    <!-- css -->
+
+    <style>
+        table,
+        th,
+        td {
+            border: 2px solid black;
+            padding: 5px;
+        }
+
+        a {
+            word-spacing: normal;
+        }
+
+        .pag-style {
+            margin-left: 322px;
+            margin-top: 20px;
+        }
+
+        .pagenumbers {
+            display: flex;
+            justify-content: left;
+            align-items: left;
+        }
+
+        .pagenumbers button {
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            background-color: black;
+            margin: 7px;
+            color: #FFF;
+            font-size: 15px;
+        }
+
+        .pagenumbers button:hover {
+            background-color: rgb(128, 128, 128, 0.4);
+        }
+
+        .pagenumbers button.active {
+            background-color: rgb(128, 128, 128, 0.4);
+        }
+
+        button {
+            font-size: 12px;
+            padding: 5px;
+            border-radius: 2px;
+            background: black;
+            color: white;
+            float: right;
+            width: 100px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: rgb(128, 128, 128, 0.4);
+        }
+
+        button.active {
+            background-color: rgb(128, 128, 128, 0.4);
+        }
+
+        #myInput {
+            border: 2px solid black;
+            margin-left: 3%;
+            padding: 10px;
+            border-radius: 15px;
+            background-color: rgb(191, 191, 204);
+            color: rgb(10, 10, 10);
+            ;
+        }
+
+        input[type=text] {
+            width: 10%;
+            -webkit-transition: width 0.15s ease-in-out;
+            transition: width 0.15s ease-in-out;
+        }
+
+        input[type=text]:focus {
+            width: 15%;
+        }
+    </style>
+
+</head>
+
+<body style="background-color: rgb(191, 191, 204);">
+    <h1 style="background-color: rgb(10, 10, 10);color: #f3eded;text-align: center;padding: 20px;"> User's Profile </h1>
+
+    <nav style="font-size: 20px;padding: 10px;word-spacing: 30px;">
+        <a href="admin.html">My Profile</a> |
+        <a href="usersprofile.html">All User's Profile</a> |
+        <a href="login.html">Logout</a>
+
+        <input type="text" id="myInput" placeholder="Search" title="Search for result..">
+
+    </nav>
+
+    <main>
+        <div class="list" id="list"></div>
+
+        <fieldset>
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody class="tbody-pagination">
+
+                </tbody>
+
+            </table>
+
+        </fieldset>
+
+        <div class="pagenumbers pag-style" id="pagination"></div>
+    </main>
+
+
+    <!-- javascript -->
+
+    <script>
+        var selected_index = -1;
+        var table = document.getElementById("regtable");
+
+        let userData = localStorage.getItem("users")
+        userData = JSON.parse(userData)
+        console.log(userData)
+
+
+        const list_items = userData
+        const list_element = document.getElementById('list');
+        const pagination_element = document.getElementById('pagination');
+
+        let current_page = 1;
+        let rows = 3;
+        let isRefresh = true
+
+        function DisplayList(items, wrapper, rows_per_page, page) {
+            wrapper.innerHTML = "";
+            page--;
+            let filteredData = localStorage.getItem("filteredData")
+            filteredData = JSON.parse(filteredData)
+            let start = rows_per_page * page;
+            let end = start + rows_per_page;
+            let paginatedItems = userData.slice(start, end);
+
+            if (filteredData && !isRefresh) {
+
+                paginatedItems = filteredData.slice(start, end);
+            }
+
+
+            var table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+
+            var Table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+
+            Table.innerHTML = "";
+
+            for (let i = 0; i < paginatedItems.length; i++) {
+
+                var row = table.insertRow();
+                unameCell = row.insertCell();
+                pwd1NameCell = row.insertCell();
+                emailNameCell = row.insertCell();
+                actionNameCell = row.insertCell();
+
+                unameCell.innerHTML = paginatedItems[i].username;
+                pwd1NameCell.innerHTML = paginatedItems[i].pwd1;
+                emailNameCell.innerHTML = paginatedItems[i].email;
+                actionNameCell.innerHTML = `<button id="connect-button" value="${paginatedItems[i].email} ">CONNECT</button>`;
+
+            }
+
+        }
+
+
+        // Edit Data
+
+        function redirectNewpage(email) {
+            localStorage.setItem("edituser", email);
+
+            window.location = "./edit.html";
+
+        }
+
+
+
+        // Delete Data
+
+        function Delete(email) {
+
+            var result = confirm("Are you sure to delete?");
+
+            if (result) {
+
+                let data = userData.filter(item => item.email !== email)
+
+                localStorage.setItem("users", JSON.stringify(data));
+
+                location.reload();
+
+            }
+        }
+
+
+
+        // Pagination
+
+
+        function SetupPagination(items, wrapper, rows_per_page) {
+
+            wrapper.innerHTML = "";
+
+            let UserData = userData
+            let filteredData = localStorage.getItem("filteredData")
+            filteredData = JSON.parse(filteredData)
+            if (filteredData && !isRefresh) {
+                UserData = filteredData
+            }
+
+            let page_count = Math.ceil(UserData.length / rows_per_page);
+            for (let i = 1; i < page_count + 1; i++) {
+                let btn = PaginationButton(i);
+                wrapper.appendChild(btn);
+            }
+        }
+
+        function PaginationButton(page) {
+            let button = document.createElement('button');
+            button.innerText = page;
+
+            if (current_page == page) button.classList.add('active');
+
+            button.addEventListener('click', function () {
+                current_page = page;
+                let items = []
+                DisplayList(items, list_element, rows, current_page);
+
+                let current_btn = document.querySelector('.pagenumbers button.active');
+                current_btn.classList.remove('active');
+
+                button.classList.add('active');
+            });
+
+            return button;
+        }
+
+        DisplayList(list_items, list_element, rows, current_page);
+        SetupPagination(list_items, pagination_element, rows)
+
+
+        // Search Data
+
+
+        function filterTable(event) {
+            let userData = localStorage.getItem("users")
+            isRefresh = false
+            userData = JSON.parse(userData)
+            var filteredData = userData.filter(item => (
+                Object.keys(item).some(key => item[key] != null ? item[key].toString().toLowerCase().includes(event.target.value) : "")
+            ));
+            localStorage.setItem("filteredData", JSON.stringify(filteredData))
+
+            DisplayList(list_items, list_element, rows, current_page);
+            SetupPagination(pagination_element, rows)
+        }
+
+        document.querySelector('#myInput').addEventListener('keyup', filterTable, false);
+
+
+
+        // function removeloggeduser() {
+        //     localStorage.removeItem("loggeduser");
+        // }
+    </script>
+
+</body>
+
+</html>
